@@ -1,0 +1,37 @@
+\section{Introduction}
+ 
+Every random number produced by a computer passes through a three-stage pipeline
+\citep{turan2018,barker2015}. A noise source exposes an unpredictable physical
+process as raw bits that are biased and correlated; a conditioner compresses them into a
+shorter, near-uniform block \citep{vonneumann1951,impagliazzo1989}; a deterministic
+random bit generator (DRBG) expands that block into an arbitrarily long stream
+\citep{matsumoto1998,oneill2014}. The quantity flowing through the pipeline is
+min-entropy, the worst-case unpredictability of the source.
+ 
+In scientific computation the pipeline is invisible. The operating system runs all three
+stages inside one system call, and the practitioner either consumes its output directly
+or bypasses the first two stages by supplying a fixed seed. Bayesian estimation
+\citep{geweke1999}, bootstrap inference \citep{kilian1998}, simulation-based testing
+\citep{diebold1995}, and reinforcement learning \citep{henderson2018} all obtain
+randomness this way, and the seed becomes the entire record of where it came from.
+ 
+A seed reproduces the expansion stage and nothing else. It records nothing about which
+sources contributed or whether they were functioning, it cannot detect a generator that
+has silently begun returning constants, and it does not guarantee bit-exact
+reproduction, because the expanded stream depends on the DRBG implementation as well as
+the seed. Seed choice alone produces reported-effect-sized variation in machine
+learning \citep{henderson2018,agarwal2021}, and computational reproducibility remains a
+first-order concern across the quantitative sciences \citep{peng2011,stodden2016}. No
+Python tool addresses the gap: \texttt{os.urandom} is opaque by design, NumPy's
+\texttt{SeedSequence} handles expansion only \citep{harris2020}, and randomness beacons
+provide public values without local sources or health monitoring
+\citep{syta2017,kelsey2019}.
+ 
+This proposal asks whether entropy provenance, source integrity, and exact replay can be
+made first-class properties of stochastic scientific computation, and what system design
+achieves them. The proposed system is Knuckleball, a Python entropy layer intended to
+credit min-entropy from heterogeneous sources under explicit assertions, condition it
+within the credited budget, monitor source health with standardized tests, and record
+emitted randomness in a tamper-evident transcript for replay, while leaving existing
+consumers of \texttt{random.Random} and NumPy unchanged.
+ 

@@ -1,0 +1,42 @@
+\section{Problem and Design Goals}
+ 
+The provenance gap decomposes into three problems. \emph{Provenance}: for any block of
+randomness, which sources contributed, how much entropy each was credited, and when.
+\emph{Integrity}: whether a source is still delivering the entropy it is credited with,
+given that a failed source returns bytes of the correct type and raises no error.
+\emph{Replay}: whether a third party can reconstruct the randomness a computation
+consumed on different hardware and library versions, without trusting the original
+machine.
+ 
+Four failure modes with documented precedent motivate the design \citep{turan2018}:
+silent source death, where a generator returns constants after a fault; over-extraction,
+where a conditioner emits more bits than its input entropy justifies; over-trusted
+assertion, where a source is credited at a rate it does not deliver; and implementation
+drift, where a fixed seed yields different streams across library versions. An active
+adversary who observes or influences the source at run time is out of scope; that is the
+threat model of cryptographic generation, which the system does not address.
+ 
+The design is organized around four goals, stated here as targets rather than as
+guarantees, since their exact form will be settled by implementation.
+ 
+\begin{itemize}
+  \item \textbf{G1 (Budget accounting).} Conditioned output should be bounded by the
+        min-entropy credited from sources, following the extraction bounds established
+        in the theoretical literature, so that the system never silently degrades into a
+        pseudo-random generator while presenting itself as physical.
+  \item \textbf{G2 (Health monitoring).} Sources should be monitored continuously by
+        standardized health tests, excluded from crediting when they fail, and auditable
+        against their asserted rates by empirical estimation.
+  \item \textbf{G3 (Replay).} Emitted randomness should be recorded with its provenance
+        in a tamper-evident form, such that a computation can be re-run on the recorded
+        randomness rather than on live sources.
+  \item \textbf{G4 (Transparency).} Existing consumers of Python's and NumPy's random
+        interfaces should operate unchanged, with the provenance layer confined to the
+        seeding step and adding no statistical distortion.
+\end{itemize}
+ 
+Three exclusions are explicit: the system is not a cryptographic generator and must not
+be used for keys or tokens; it does not stream physical entropy into every variate but
+draws it to seed an expander; and the initial system is pure Python, with hardware
+instructions and sensor sources as optional extras.
+ 

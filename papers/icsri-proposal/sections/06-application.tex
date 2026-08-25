@@ -1,0 +1,24 @@
+\section{Application}
+ 
+The system will be attached to three standard econometric workloads chosen to span
+Bayesian estimation, resampling inference, and simulation-based testing. In each case
+the attachment is the same: one conditioned block seeds the workload's generator, the
+transcript records that block with its provenance and health state, and a second
+machine replays the transcript and re-runs the workload.
+ 
+\begin{itemize}
+  \item \textbf{Bayesian vector autoregression.} A BVAR with a Minnesota prior
+        \citep{litterman1986} estimated by Gibbs sampling on a standard macroeconomic
+        dataset, where posterior forecast bands depend on the sampler's random draws.
+  \item \textbf{Bootstrap impulse-response intervals.} Bias-corrected bootstrap
+        confidence intervals for impulse responses \citep{kilian1998}, where interval
+        endpoints depend on the resampling sequence.
+  \item \textbf{Monte Carlo evaluation of a forecast comparison test.} The empirical
+        size of the Diebold--Mariano test \citep{diebold1995} under a known data-generating
+        process, where rejection rates depend on the simulated error sequences.
+\end{itemize}
+ 
+Each workload demonstrates three things: that the provenance layer attaches without
+changes to the estimation code (G4), that the run replays exactly on a second platform
+(G3), and, as an illustration rather than a finding, how wide the band of results is
+across independently seeded runs.

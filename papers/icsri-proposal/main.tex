@@ -1,0 +1,60 @@
+\documentclass[11pt]{article}
+ 
+% --- Page and fonts ---
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+ 
+% --- Citations (author-year, as in last year's proposal) ---
+\usepackage[authoryear,round]{natbib}
+ 
+% --- Misc ---
+\usepackage{hyperref}
+\hypersetup{colorlinks=true, linkcolor=black, citecolor=black, urlcolor=black}
+
+\title{Knuckleball: Auditable Entropy Provenance and Exact Replay for Stochastic Scientific Computation\\[0.4em]\large ICSRI Research Proposal}
+\author{Nikhil Sunder\thanks{ICSRI Research Fellow, Intelligent Computer Systems Research Institute, Miami Herbert Business School, University of Miami. Email: \texttt{nss106@miami.edu}. ORCID: 0009-0007-3323-1760.}\\\normalsize Miami Herbert Business School, University of Miami}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Stochastic scientific computation in Python has no provenance layer: randomness enters
+through an opaque system call, is expanded by a pseudo-random generator, and is
+reproduced only by re-supplying a seed, which records nothing about the entropy source,
+cannot detect its degradation, and does not guarantee bit-exact replay across platforms.
+This proposal outlines the research proposition for Knuckleball: a Python entropy layer
+for stochastic scientific computation that harvests randomness from physical and system
+sources, conditions it under an explicit min-entropy budget, monitors source health with
+standardized statistical tests, and records emitted randomness in a verifiable
+transcript so that non-deterministic computations can be replayed exactly and their
+randomness audited by third parties.
+\end{abstract}
+
+\noindent\textbf{Broad Topic:} Systems Design and Systems Research
+ 
+\noindent\textbf{Narrowed Topic:} Entropy provenance, source health, and exact replay for pseudo-random and physical randomness in scientific computation
+ 
+\noindent\textbf{Final Artifacts:} Python package (PyPI, conda-forge, OpenSSF Best Practices); research paper and JOSS software paper; reproducible notebooks and cross-platform test harness
+
+\input{sections/01-introduction}
+
+\input{sections/02-problem-and-requirement}
+
+\input{sections/03-architecture}
+
+\input{sections/04-theoretical-basis}
+
+\input{sections/05-positioning}
+
+\input{sections/06-application}
+
+\input{sections/07-evaluation}
+
+\bibliographystyle{plainnat}
+\bibliography{references}
+ 
+\end{document}

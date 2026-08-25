@@ -1,0 +1,24 @@
+\section{Positioning}
+ 
+Knuckleball composes standardized components rather than replacing them. NIST
+SP~800-90A, B, and C \citep{barker2015,turan2018,barker2024} together define the
+source, conditioner, and expander stages and the rules for composing them; the proposed
+system implements the source and conditioner stages in Python with the standard's own
+health tests and estimators, and delegates expansion to existing DRBGs.
+ 
+Existing Python tools each cover one stage. \texttt{os.urandom} and \texttt{secrets}
+expose the operating system's full pipeline as an opaque call, which is correct for
+cryptography and uninformative for provenance. NumPy's \texttt{SeedSequence} and
+\texttt{Generator} \citep{harris2020} provide high-quality expansion and seed spreading
+but begin at the seed. Randomness beacons such as drand and the NIST Beacon
+\citep{syta2017,kelsey2019} publish verifiable public values on a schedule, which
+serves public randomization but offers no local source, no conditioning, and no health
+monitoring. Hardware generator interfaces expose a single vendor source at an asserted
+rate with no accounting. To the author's knowledge no tool in the Python ecosystem
+makes the source, the entropy budget, the health state, and the emitted stream jointly
+visible, and none provides replay independent of the expander implementation.
+ 
+Python and scientific computation are the chosen scope because that is where the
+reproducibility burden falls in practice: the workloads of Section~6 are written in
+Python against NumPy, and their results are expected to be reproducible by reviewers
+who do not share the author's hardware.

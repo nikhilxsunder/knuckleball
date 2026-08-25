@@ -1,0 +1,50 @@
+\section{Evaluation}
+ 
+\subsection{Validation of design goals}
+ 
+Each design goal will be validated by a procedure that could fail.
+ 
+\begin{itemize}
+  \item \textbf{G1.} Conditioned output will be subjected to standard statistical test
+        batteries \citep{lecuyer2007}, and the ledger will be audited to confirm that
+        no read exceeded the credited budget under the accounting rule of Section~4.
+  \item \textbf{G2.} Failures will be injected into each source---constant output,
+        stuck bits, collapsed variance---and detection latency and false-alarm rate
+        will be measured against the bounds implied by the SP~800-90B parameters.
+        Asserted rates for each source will be compared against estimated rates.
+  \item \textbf{G3.} Transcripts recorded on macOS (ARM) will be replayed on Linux (x86)
+        and Windows, and the emitted streams compared byte for byte. Modified and
+        truncated transcripts will be verified to fail.
+  \item \textbf{G4.} Each workload of Section~6 will be run with and without the
+        provenance layer; output distributions will be compared and wall-clock overhead
+        measured.
+\end{itemize}
+ 
+\subsection{Metrics}
+ 
+Test-battery pass rates on conditioned output; budget-audit violations (target zero);
+detection latency in samples and false alarms per healthy sample; exact-match rate
+across platforms; overhead as a fraction of workload wall-clock time; and, for each
+workload, the dispersion of results across independently seeded runs.
+ 
+\subsection{Hypotheses}
+ 
+\begin{enumerate}
+  \item \textbf{Accounting hypothesis:} budgeted output passes the same statistical
+        batteries as the underlying expander while never exceeding credited entropy.
+  \item \textbf{Detection hypothesis:} every injected failure mode is detected within
+        the latency implied by the health-test parameters, with no false alarms over an
+        extended healthy run.
+  \item \textbf{Replay hypothesis:} every workload replays exactly across the three
+        platforms.
+  \item \textbf{Cost hypothesis:} overhead is confined to seeding and is a small fraction
+        of workload wall-clock time.
+\end{enumerate}
+ 
+\subsection{Deliverables}
+ 
+A Python package published to PyPI and conda-forge under OpenSSF Best Practices; a
+written specification of the design and its accounting rules; the fault-injection and
+cross-platform test harness; reproducible notebooks for the three workloads; a JOSS
+software paper; and a full-length paper describing the design and its validation for a
+computational-methods or reproducibility venue.

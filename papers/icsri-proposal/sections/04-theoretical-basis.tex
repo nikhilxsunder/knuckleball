@@ -1,0 +1,36 @@
+\section{Theoretical Basis}
+ 
+The design rests on established results rather than new theory; this section identifies
+them and the role each plays.
+ 
+\textbf{Min-entropy and extraction.} Min-entropy measures the probability of the single
+most likely outcome and is the correct quantity for randomness extraction, because it
+bounds the success of the best guess rather than the average surprise. The leftover
+hash lemma \citep{impagliazzo1989,hastad1999} establishes that a universal hash family
+applied to a source of known min-entropy yields output close to uniform provided the
+output is shorter than the input entropy by a margin that depends on the desired
+closeness. This result sets the accounting rule for G1: the ledger debits output length
+plus the lemma's loss term. Toeplitz matrices are a standard universal family with a
+short seed and an elementary universality argument \citep{krawczyk1994}, which is why
+they are the expected default conditioner.
+ 
+\textbf{Entropy estimation and health testing.} NIST SP~800-90B \citep{turan2018}
+specifies both a battery of estimators for min-entropy on non-IID sources and two
+continuous health tests: a repetition-count test that detects a source stuck on a
+constant, and an adaptive-proportion test that detects a source whose most likely value
+has become too frequent. Both tests are parameterized by the source's asserted rate and
+a target false-alarm probability, and both have bounded detection latency under those
+parameters. G2 adopts the standard's tests and estimators directly rather than
+designing new ones.
+ 
+\textbf{Hash chaining.} Linking each transcript record to its predecessor through a
+collision-resistant hash makes any modification, deletion, or truncation detectable on
+verification, a construction with long precedent in timestamping and audit logging.
+G3 uses it to make transcripts tamper-evident; the same construction underlies the
+NIST beacon format \citep{kelsey2019}.
+ 
+\textbf{Data processing.} Statistical distance cannot increase under a deterministic
+function. Because an expander is deterministic in its seed, a consumer fed a seed that
+is close to uniform sees output that is at least as close to what it would see from an
+ideal seed. This is the basis for G4: transparency follows from the seed's quality and
+requires nothing of the consumer.

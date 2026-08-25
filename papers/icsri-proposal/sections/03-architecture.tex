@@ -1,0 +1,34 @@
+\section{Architecture}
+ 
+The anticipated architecture follows the pipeline of Section~1 directly, with one
+layer per stage and a recording layer alongside. A \emph{source} layer wraps a physical
+or system process and exposes raw bytes together with a declared entropy rate, a flag
+indicating whether the output is public, and a flag indicating whether acquisition
+performs I/O. The declared rate is the one place a human judgement enters the pipeline,
+and the design records it rather than inferring it. A \emph{health} layer applies the
+SP~800-90B repetition-count and adaptive-proportion tests to each source's raw output
+and marks sources that fail. A \emph{conditioning} layer compresses raw bytes to
+near-uniform output; a universal-hash extractor is the expected default, with classical
+debiasing and the SP~800-90A derivation function as alternatives. A \emph{pool} owns
+the entropy ledger, coordinating credit from healthy sources, conditioning, debit, and
+emission, with a configurable policy for reads the ledger cannot cover. A
+\emph{bridge} layer adapts the pool to \texttt{random.Random} and to NumPy's
+\texttt{SeedSequence}, and a \emph{transcript} records emitted randomness with a hash
+chain and stands in for the sources during replay.
+ 
+The intended consumption pattern is seed-then-expand: one conditioned block per
+computation seeds an existing expander, and the transcript holds one record per run.
+This confines overhead to a single read and keeps the provenance layer invisible past
+the seed, which is what makes G4 achievable without modifying downstream code. Streaming
+physical entropy into every variate would offer no statistical benefit to simulation and
+would make replay impractical.
+ 
+Two conventions carry over from the author's existing packages. Asynchronous interfaces
+will exist only where I/O occurs, principally for network beacon sources. And no caching
+may sit on the entropy path, since a cached block re-emitted represents zero new entropy
+credited as fresh; this will be enforced by test rather than by convention.
+ 
+The public interface, module boundaries, and configuration surface are deliberately
+left open at this stage. Decisions on which conditioners ship by default, how the
+ledger handles concurrent readers, and how transcripts are serialized will be made
+against working code and the workloads of Section~6.
